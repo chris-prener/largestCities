@@ -67,3 +67,5 @@ pop1810 %<>%
 
 # combine data sets
 largestCities <- bind_rows(pop1790, pop1800, pop1810)
+
+saveRDS(largestCities, "data/largestCities.rds")
