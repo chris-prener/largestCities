@@ -10,9 +10,9 @@ shinyServer(function(input, output) {
   sliderValues <- reactive({
     
     largestCities %>%
-      filter(year == input$year) %>%
-      select(-year) %>%
-      mutate(pop = as.integer(pop))
+      filter(Year == input$year) %>%
+      select(-Year) %>%
+      mutate(Population = as.integer(Population))
     
   })
   

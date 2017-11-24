@@ -8,7 +8,7 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(# Simple integer interval
     sliderInput("year", "Year:", 
-                min=1790, max=1810, value=0, step=10, sep = "")
+                min=1790, max=1830, value=10, step=10, sep = "")
     ),
   
   # Show a table summarizing the values entered
