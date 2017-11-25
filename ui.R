@@ -1,7 +1,7 @@
 library(shiny)
 
 # Define UI for miles per gallon application
-shinyUI(pageWithSidebar(
+shinyUI(fluidPage(
   
   # Application title
   headerPanel("Largest Cities in America"),
@@ -18,7 +18,9 @@ shinyUI(pageWithSidebar(
                             "Philadelphia", "St. Louis"),
                 selected = " "),
     
-    checkboxInput("allYears", "Show all years' data for selected city", FALSE)
+    checkboxInput("allYears", "Show all years' data for selected city", FALSE),
+    
+    actionButton("reset", "Reset App")
     ),
   
   # Show a table summarizing the values entered
