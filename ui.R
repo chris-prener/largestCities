@@ -7,24 +7,28 @@ shinyUI(fluidPage(
   headerPanel("Largest Cities in America"),
   
   sidebarPanel(
-    helpText("Trace the growth of America's largest cities from 1790 to 2010."),
+    helpText("Trace the growth of America's largest cities from 1790 to 2010. You can display either the ten largest cities per decennial census or focus on a single city's changes over time."),
     
-    sliderInput("year", "Census Year:", 
+    sliderInput("year", "Choose a Census Year:", 
                 min=1790, max=2010, value=10, step=10, sep = ""),
     
     selectInput("city", 
-                label = "Optionally choose a city to focus on:",
+                label = "Choose a City:",
                 choices = c(" ", "Baltimore", "Boston", "Chicago", "Los Angeles", "New Orleans", "New York",
                             "Philadelphia", "St. Louis"),
                 selected = " "),
-    
-    checkboxInput("allYears", "Show all years' data for selected city", FALSE),
     
     actionButton("reset", "Reset App")
     ),
   
   # Show a table summarizing the values entered
   mainPanel(
-    tableOutput("values")
+    
+    # Output: Tabset w/ table and plot
+    tabsetPanel(type = "tabs",
+                tabPanel("Table", tableOutput("values")),
+                tabPanel("Plot", plotOutput("plot"))
+    )
+    
   )
 ))

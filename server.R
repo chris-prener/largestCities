@@ -1,5 +1,7 @@
 library(shiny)
 library(dplyr)
+library(ggplot2)
+library(scales)
 
 largestCities <- readRDS("data/largestCities.rds")
 
@@ -7,7 +9,7 @@ largestCities <- readRDS("data/largestCities.rds")
 shinyServer(function(input, output, session) {
   
   # Reactive expression to compose a data frame containing all of the values
-  sliderValues <- reactive({
+  dataset <- reactive({
     
     if (input$city == " ") {
       largestCities %>%
@@ -25,10 +27,25 @@ shinyServer(function(input, output, session) {
   
   })
   
+  output$plot <- renderPlot({
+    if (input$city != " ") {
+      p <- ggplot(dataset(), mapping = aes(x=Year, y=Population)) + 
+              geom_line() +
+              scale_y_continuous(labels = comma) +
+              theme_grey(base_size = 18)
+      
+      print(p)
+    }
+    
+  })
+  
+  observeEvent(input$city, {
+    updateSliderInput(session, "year", value = 1790, min=1790, max=2010, step=10)
+  })
+  
   observeEvent(input$reset, {
     updateSliderInput(session, "year", value = 1790, min=1790, max=2010, step=10)
     updateSelectInput(session, "city", 
-                label = "Optionally choose a city to focus on:",
                 choices = c(" ", "Baltimore", "Boston", "Chicago", "Los Angeles", "New Orleans", "New York",
                             "Philadelphia", "St. Louis"),
                 selected = " ")
@@ -36,6 +53,6 @@ shinyServer(function(input, output, session) {
   
   # Show the values using an HTML table
   output$values <- renderTable({
-      sliderValues()
+    dataset()
   })
 })
