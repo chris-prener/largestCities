@@ -373,6 +373,7 @@ pop2010 <- do.call(rbind, tablesList)
 pop2010 %<>%
   rename(Population = `Population[3]`) %>%
   mutate(Population = as.numeric(gsub(",", "", Population))) %>%
+  mutate(City = ifelse(City == "New York City", "New York", City)) %>%
   select(-Notes) %>%
   mutate(Year = 2010)
 
@@ -382,4 +383,29 @@ largestCities <- bind_rows(pop1790, pop1800, pop1810, pop1820, pop1830, pop1840,
                            pop1930, pop1940, pop1950, pop1960, pop1970, pop1980, pop1990,
                            pop2000, pop2010)
 
+# clean up enviornment
+rm(pop1790, pop1800, pop1810, pop1820, pop1830, pop1840, pop1850,
+   pop1860, pop1870, pop1880, pop1890, pop1900, pop1910, pop1920,
+   pop1930, pop1940, pop1950, pop1960, pop1970, pop1980, pop1990,
+   pop2000, pop2010)
+rm(webpage)
+rm(tablesList)
+rm(tables)
+
+# concatenate cities and states
+largestCities %<>% 
+  mutate(cityState = paste(City, State, sep = ", ")) %>%
+  mutate(cityState = ifelse(City == "New York", "New York City", cityState)) %>%
+  mutate(cityState = ifelse(City == "New Orleans", "New Orleans, Louisiana", cityState))
+
+# create list of distinct cities
+distinctCities <- distinct(largestCities, cityState)
+
+# grab latitutde and longitude from Google API
+distinctCities <- mutate_geocode(distinctCities, cityState)
+
+# join list of distinct cities with largest cities
+largestCities <- left_join(largestCities, distinctCities, by = "cityState")
+
+# export data file
 saveRDS(largestCities, "data/largestCities.rds")
